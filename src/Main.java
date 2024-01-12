@@ -13,6 +13,9 @@ public class Main {
 //        readAllData();
 
 //        readSpecificRow();
+//        updateFirstName();
+//        deleteRow();
+//        getNumberOfUsers();
     }
 
 
@@ -50,6 +53,7 @@ public class Main {
             // this exception may occur if null value passed as an example
         }
     }
+    // how to ensure no duplicate email input if this is to be our unique identifier???
 
     private static void readAllData(){
         Connection con = DbConnection.connect(); // connection object
@@ -119,6 +123,66 @@ public class Main {
             }
 
         }
+    }
+
+    private static void updateFirstName(){
+        Connection con = DbConnection.connect();
+        PreparedStatement ps = null;
+        try{
+            String sql = "UPDATE users set firstName = ? WHERE email = ? ";
+            ps = con.prepareStatement(sql);
+            ps.setString(1, "Bobzilla");
+            ps.setString(2, "bob.com");
+            ps.execute();
+            System.out.println("data has been updated");
+        } catch (SQLException e){
+            System.out.println(e.toString());
+        }
+    }
+
+    private static void deleteRow(){
+        Connection con = DbConnection.connect();
+        PreparedStatement ps = null;
+        try{
+            String sql = "delete from users WHERE email = ? ";
+            ps = con.prepareStatement(sql);
+            ps.setString(1,"toast.com");
+            ps.execute();
+            System.out.println("Data has been deleted");
+        } catch (Exception e){
+            System.out.println(e.toString());
+        } finally {
+            try{
+                ps.close();
+                con.close();
+            } catch (SQLException e){
+                e.printStackTrace(); // will tell what kind of error and which line it occured on
+            }
+        }
+    }
+
+    private static void getNumberOfUsers(){
+        Connection con = DbConnection.connect();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+       try {
+           String sql = "select count(firstName) from users";
+           ps = con.prepareStatement(sql);
+           rs = ps.executeQuery();
+           int size = rs.getInt(1);
+           System.out.println("you have " + size + " users");
+       } catch (SQLException e){
+           System.out.println(e.toString());
+       } finally {
+           try{
+               rs.close();
+               ps.close();
+               con.close();
+           } catch (SQLException e){
+               System.out.println(e.toString());
+           }
+       }
     }
 
 }
